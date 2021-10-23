@@ -7,5 +7,6 @@
         public const string BASE_OPTIONS = "BaseOptions";
         public const string RATELIMITS = "RateLimits";
         public const string CUSTOM_POLICY = "CustomPolicy";
+        public const string JOB_CONFIGURATION_OPTIONS = "JobConfigurationOptions";
     }
 }

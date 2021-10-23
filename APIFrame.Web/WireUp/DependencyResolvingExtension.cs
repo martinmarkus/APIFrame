@@ -7,7 +7,7 @@ using System.Reflection;
 
 namespace APIFrame.Web.WireUp
 {
-    public static class DependencyResolvingExtensions
+    public static class DependencyResolvingExtension
     {
         public static void ResolveDynamically(this IServiceCollection services, string interfaceNs, string impNs)
         {

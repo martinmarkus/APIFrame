@@ -5,7 +5,7 @@ namespace APIFrame.BackgroundService.Jobs
 {
     public abstract class Job: IJob
     {
-        public BackgroundJobService BackgroundJobService { get; private set; } = new();
+        public BackgroundJobService BackgroundJobService { get; } = new();
 
         public abstract void StartJob();
     }

@@ -4,7 +4,7 @@ using System;
 
 namespace APIFrame.BackgroundService.Services
 {
-    public sealed class BackgroundJobService : IBackgroundJobService
+    public class BackgroundJobService : IBackgroundJobService
     {
         public void FireAndForgetJob<T>(Action action)
         {

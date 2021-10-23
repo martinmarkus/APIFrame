@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace APIFrame.Web.WireUp
 {
-    public static class ApplicationBuilderExtensions
+    public static class ApplicationBuilderExtension
     {
         public static void UseCustomSwagger(this IApplicationBuilder app, string appName)
         {

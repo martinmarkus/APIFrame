@@ -7,7 +7,7 @@ namespace APIFrame.Web.Controllers
     [ApiController]
     [ExceptionHandling.ExceptionHandler]
     [ServiceFilter(typeof(APILogger))]
-    public class APIBaseController : ControllerBase
+    public abstract class APIBaseController : ControllerBase
     {
     }
 }

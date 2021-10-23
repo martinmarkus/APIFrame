@@ -60,8 +60,11 @@ namespace APIFrame.Web.WireUp
             services.AddCustomHangfire();
             services.AddCustomSwagger(_appName);
 
-            services.AddScoped<IJobConfigurationResolver, JobConfigurationResolver>();
-
+            var jobConfigSection = Configuration.GetSection(OptionConstants.JOB_CONFIGURATION_OPTIONS);
+            var jobConfigOptions = jobConfigSection.Get<JobConfigurationOptions>();
+            services.AddJobConfigurations(jobConfigOptions.JobConfigPath);
+            services.AddScoped(typeof(IJobOptions<>), typeof(JobOptions<>));
+            
             services.AddCustomBaseTypes();
 
             var rateLimitingConfig = Configuration.GetSection(OptionConstants.RATELIMITS);
@@ -96,7 +99,9 @@ namespace APIFrame.Web.WireUp
             });
         }
 
-        public virtual void Configure(IApplicationBuilder app, IWebHostEnvironment env, IJobConfigurationResolver resolver)
+        public virtual void Configure(
+            IApplicationBuilder app,
+            IWebHostEnvironment env)
         {
             // INFO: For nginx hosting
             app.UseForwardedHeaders(new ForwardedHeadersOptions
@@ -104,7 +109,9 @@ namespace APIFrame.Web.WireUp
                 ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
             });
 
-            if (env.EnvironmentName.Equals(EnvironmentConstants.DEVELOPMENT, StringComparison.OrdinalIgnoreCase))
+            if (env.EnvironmentName.Equals(
+                EnvironmentConstants.DEVELOPMENT,
+                StringComparison.OrdinalIgnoreCase))
             {
                 app.UseCustomSwagger(_appName);
             }
