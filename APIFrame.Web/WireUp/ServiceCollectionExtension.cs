@@ -1,30 +1,48 @@
 ﻿using AspNetCoreRateLimit;
-using APIFrame.BackgroundService.Services;
-using APIFrame.BackgroundService.Services.Interfaces;
 using APIFrame.Core.Utils;
 using APIFrame.Web.Logging;
-using Hangfire;
-using Hangfire.MemoryStorage;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System;
+using System.Reflection;
+using APIFrame.Web.Conventions;
+using System.Collections.Generic;
+using System.Linq;
+using APIFrame.Core.Configuration;
 
 namespace APIFrame.Web.WireUp
 {
-    public static class ServiceCollontionExtension
+    public static class ServiceCollectionExtension
     {
-        public static void AddCustomBaseTypes(this IServiceCollection services)
+        /// <summary>
+        /// Registers essential web dependencies, utils and logging service.
+        /// </summary>
+        /// <param name="services"></param>
+        public static void AddDefaultServices(this IServiceCollection services)
         {
-            //services.ResolveDynamically("APIFrame.Web.Services.Interfaces", "APIFrame.Web.Services");
-
-            services.AddScoped<IBackgroundJobService, BackgroundJobService>();
+            services.ResolveDynamically(Assembly.GetAssembly(typeof(ServiceCollectionExtension)));
             services.AddScoped<StringGeneratorUtil>();
             services.AddScoped<APILogger>();
+
+            services.AddControllers();
+            services.AddHttpClient();
+
+            services.AddMvc(options =>
+            {
+                options.Conventions.Add(new ControllerNameAttributeConvention());
+                options.EnableEndpointRouting = false;
+            });
         }
 
+        /// <summary>
+        /// Registers the basic JWT authentication.
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="secretKey"></param>
+        /// <param name="issuer"></param>
         public static void AddCustomAuthentication(
            this IServiceCollection services,
            byte[] secretKey,
@@ -52,6 +70,11 @@ namespace APIFrame.Web.WireUp
                 });
         }
 
+        /// <summary>
+        /// Registers swagger service for development and test environments.
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="apiName"></param>
         public static void AddCustomSwagger(this IServiceCollection services, string apiName)
         {
             services.AddSwaggerGen(c =>
@@ -88,18 +111,13 @@ namespace APIFrame.Web.WireUp
             });
         }
 
-        public static void AddCustomHangfire(this IServiceCollection services)
-        {
-            services.AddHangfire(config => config
-                .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
-                .UseSimpleAssemblyNameTypeSerializer()
-                .UseDefaultTypeSerializer()
-                .UseMemoryStorage());
-
-            services.AddHangfireServer();
-        }
-
-        public static IServiceCollection AddRateLimiting(this IServiceCollection services, IConfiguration Configuration)
+        /// <summary>
+        /// Registers AspNetCoreRateLimiting for rate limiting solution.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="services"></param>
+        /// <param name="configuration"></param>
+        public static void AddRateLimiting(this IServiceCollection services, IConfiguration Configuration)
         {
             services.AddOptions();
 
@@ -112,11 +130,15 @@ namespace APIFrame.Web.WireUp
             services.AddSingleton<IRateLimitCounterStore, MemoryCacheRateLimitCounterStore>();
 
             services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
-
-            return services;
         }
 
-        public static T ConfigureOption<T>(this IServiceCollection services, IConfiguration configuration)
+        /// <summary>
+        /// Registers the given T type as configuration for scoped and singleton usage.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="services"></param>
+        /// <param name="configuration"></param>
+        public static void AddConfiguration<T>(this IServiceCollection services, IConfiguration configuration)
             where T : class, new()
         {
             var options = new T();
@@ -124,8 +146,51 @@ namespace APIFrame.Web.WireUp
             configuration.GetSection(typeof(T).Name).Bind(options);
             services.Configure<T>(configuration.GetSection(typeof(T).Name));
             services.AddSingleton(options);
+        }
 
-            return options;
+        /// <summary>
+        /// Registers every classes as configuration type for scoped and singleton usage.
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="configuration"></param>
+        /// <param name="namespace"></param>
+        public static void AddConfigurations(this IServiceCollection services, IConfiguration configuration, string @namespace)
+        {
+            var resultTypes = new List<Type>();
+
+            var entryTypes = Assembly
+                .GetEntryAssembly()
+                .GetTypes()
+                .ToList();
+
+            resultTypes.AddRange(entryTypes);
+
+            var referencedAssemblies = Assembly
+                .GetEntryAssembly()
+                .GetReferencedAssemblies();
+
+            foreach (var assemblyName in referencedAssemblies)
+            {
+                var types = Assembly
+                    .Load(assemblyName)
+                    .GetTypes();
+
+                resultTypes.AddRange(types);
+            }
+
+            foreach (var type in resultTypes)
+            {
+                if (type.IsClass && !string.IsNullOrEmpty(type.Namespace) 
+                    && type.BaseType.Equals(typeof(BaseOptions))
+                    && type.Namespace.Equals(@namespace, StringComparison.OrdinalIgnoreCase))
+                {
+                    // INFO: Megtalált Config típus regisztrálása
+                    var configSection = configuration.GetSection(type.Name);
+                    var config = configSection.Get(type);
+                    services.ConfigureOptions(config);
+                    services.AddSingleton(config);
+                }
+            }
         }
     }
 }

@@ -3,9 +3,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace APIFrame.DataAccess.DbContexts
 {
-    public class BaseDbContext : DbContext
+    public abstract class BaseDbContext : DbContext
     {
-        public virtual DbSet<BaseUser> BaseUsers { get; set; }
+        public abstract DbSet<BaseUser> BaseUsers { get; set; }
 
         public BaseDbContext(DbContextOptions<BaseDbContext> dbContextOptions) : base(dbContextOptions)
         {

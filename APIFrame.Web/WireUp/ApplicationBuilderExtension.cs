@@ -43,10 +43,7 @@ namespace APIFrame.Web.WireUp
 
         public static void UseBaseServices(this IApplicationBuilder app)
         {
-            app.UseCors("CustomPolicy");
-
             app.UseCookiePolicy();
-            app.UseAuthentication();
             app.UseMvc();
             app.UseHttpsRedirection();
             app.UseRouting();

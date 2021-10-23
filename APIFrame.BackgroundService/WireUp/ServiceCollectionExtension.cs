@@ -1,4 +1,8 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using APIFrame.BackgroundService.Services;
+using APIFrame.BackgroundService.Services.Interfaces;
+using Hangfire;
+using Hangfire.MemoryStorage;
+using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -9,6 +13,22 @@ namespace APIFrame.BackgroundService.WireUp
 {
     public static class ServiceCollectionExtension
     {
+        public static void AddCustomHangfire(this IServiceCollection services)
+        {
+            services.AddHangfire(config => config
+                .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+                .UseSimpleAssemblyNameTypeSerializer()
+                .UseDefaultTypeSerializer()
+                .UseMemoryStorage());
+
+            services.AddHangfireServer();
+        }
+
+        public static void AddBackgroundJobSerice(this IServiceCollection services)
+        {
+            services.AddScoped<IBackgroundJobService, BackgroundJobService>();
+        }
+
         public static void AddJobConfigurations(
             this IServiceCollection services,
             string configBasePath)

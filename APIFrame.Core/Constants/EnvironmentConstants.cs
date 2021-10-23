@@ -4,5 +4,6 @@
     {
         public const string DEVELOPMENT = "Development";
         public const string PRODUCTION = "Production";
+        public const string TEST = "Test";
     }
 }
