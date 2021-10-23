@@ -28,7 +28,7 @@ namespace APIFrame.Web.WireUp
                 .ToList();
 
             var implementations = types
-                .Where(type => type.IsClass && type.Namespace.Equals(impNs,StringComparison.OrdinalIgnoreCase))
+                .Where(type => type.IsClass && type.Namespace.Equals(impNs, StringComparison.OrdinalIgnoreCase))
                 .ToList();
 
             foreach (var interfaceType in interfaces)
@@ -53,78 +53,6 @@ namespace APIFrame.Web.WireUp
                 catch (Exception e)
                 {
                     Console.WriteLine(e.ToString());
-                }
-            }
-        }
-
-        /// <summary>
-        /// Dynamically resolves every possible interface-implementation pairs in every custom project-level assemblies.
-        /// </summary>
-        /// <param name="services"></param>
-        /// <param name="assembly"></param>
-        public static void ResolveDynamically(this IServiceCollection services)
-        {
-            var resultTypes = new List<Type>();
-
-            var entryTypes = Assembly
-                .GetEntryAssembly()
-                .GetTypes()
-                .ToList();
-
-            resultTypes.AddRange(entryTypes);
-
-            var referencedAssemblies = Assembly
-                .GetEntryAssembly()
-                .GetReferencedAssemblies();
-
-            foreach (var assemblyName in referencedAssemblies)
-            {
-                var types = Assembly
-                    .Load(assemblyName)
-                    .GetTypes();
-
-                resultTypes.AddRange(types);
-            }
-
-            var interfaces = new List<Type>();
-            var implementations = new List<Type>();
-
-            foreach (var type in resultTypes)
-            {
-                if (string.IsNullOrEmpty(type.Namespace))
-                {
-                    continue;
-                }
-                else if (type.IsInterface)
-                {
-                    interfaces.Add(type);
-                }
-                else if (type.IsClass)
-                {
-                    implementations.Add(type);
-                }
-            }
-
-            foreach (var implementationType in implementations)
-            {
-                foreach (var interfaceType in interfaces)
-                {
-                    try
-                    {
-                        if (implementationType.Name.Equals(interfaceType.Name[1..], StringComparison.OrdinalIgnoreCase))
-                        {
-                            if (IsExceptedFromDynamicResolve(interfaceType, implementationType))
-                            {
-                                break;
-                            }
-
-                            services.AddScoped(interfaceType, implementationType);
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine(e.ToString());
-                    }
                 }
             }
         }
