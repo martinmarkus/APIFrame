@@ -1,6 +1,5 @@
 ﻿using APIFrame.BackgroundService.Configuration;
 using APIFrame.BackgroundService.WireUp.Interfaces;
-using System;
 
 namespace APIFrame.BackgroundService.WireUp
 {
@@ -8,9 +7,9 @@ namespace APIFrame.BackgroundService.WireUp
     {
         public TConfigType Value { get; private set; }
 
-        public JobOptions(IServiceProvider provider)
+        public JobOptions(TConfigType config)
         {
-            Value = provider.GetService(typeof(TConfigType)) as TConfigType;
+            Value = config;
         }
     }
 }
