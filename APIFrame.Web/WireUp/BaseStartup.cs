@@ -11,15 +11,16 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Text;
-using APIFrame.DataAccess.Repositories.Interfaces;
-using APIFrame.Core.Models;
+using APIFrame.Web.Logging;
 
 namespace APIFrame.Web.WireUp
 {
     public abstract class BaseStartup
     {
         protected IConfiguration Configuration { get; }
+
         protected IWebHostEnvironment Environment { get; private set; }
+
         protected string AppName { get; set; }
 
         protected BaseOptions BaseOptions { get; private set; }
@@ -30,15 +31,26 @@ namespace APIFrame.Web.WireUp
         {
             Configuration = configuration;
 
+            var logOptions = Configuration.GetSection(nameof(LogOptions));
+            var customLogContainerPath = logOptions.Get<LogOptions>().LogPath;
+
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
                 .AddJsonFile(
-                    $"appsettings.{env.EnvironmentName}.json",
-                    optional: true,
+                    $"appsettings.json",
+                    optional: false,
                     reloadOnChange: true)
                 .AddJsonFile(
-                    $"appsettings.{env.EnvironmentName}.json",
-                    optional: true,
+                    $"appsettings.{EnvironmentConstants.DEVELOPMENT}.json",
+                    optional: false,
+                    reloadOnChange: true)
+                .AddJsonFile(
+                    $"appsettings.{EnvironmentConstants.TEST}.json",
+                    optional: false,
+                    reloadOnChange: true)
+                .AddJsonFile(
+                    $"appsettings.{EnvironmentConstants.PRODUCTION}.json",
+                    optional: false,
                     reloadOnChange: true)
                 .AddEnvironmentVariables();
 
@@ -55,6 +67,7 @@ namespace APIFrame.Web.WireUp
 
             // INFO: Alapvető konfigurációk
             services.AddConfiguration<BaseOptions>(Configuration);
+            services.AddConfiguration<LogOptions>(Configuration);
             services.AddConfiguration<JobConfigurationOptions>(Configuration);
 
             // INFO: Alapvető webes függőségek
@@ -64,6 +77,9 @@ namespace APIFrame.Web.WireUp
             var rateLimitingConfig = Configuration.GetSection(OptionConstants.RATELIMITS);
             services.AddRateLimiting(Configuration);
             services.AddSingleton<IProcessingStrategy, AsyncKeyLockProcessingStrategy>();
+
+            // INFO: Add Serilog logging
+            Configuration.AddCustomSerilog(Environment);
 
             // INFO: Allow sync calls for IIS and Kestrel
             services.Configure<IISServerOptions>(options =>
@@ -119,6 +135,8 @@ namespace APIFrame.Web.WireUp
             IApplicationBuilder app,
             IWebHostEnvironment env)
         {
+            var isDevEnv = IsDevelopmentEnvironment();
+
             // INFO: For nginx hosting
             app.UseForwardedHeaders(new ForwardedHeadersOptions
             {
@@ -138,7 +156,7 @@ namespace APIFrame.Web.WireUp
                 app.UseAuthentication();
             }
 
-            if (BaseOptions.UseDefaultSwagger && IsDevelopmentEnvironment())
+            if (BaseOptions.UseDefaultSwagger && isDevEnv)
             {
                 app.UseCustomSwagger(AppName);
             }
@@ -146,6 +164,16 @@ namespace APIFrame.Web.WireUp
             if (BaseOptions.UseBackgroundJobs)
             {
                 app.UseCustomHangfire();
+            }
+
+            if (!isDevEnv)
+            {
+                app.UseHsts();
+            }
+
+            if (isDevEnv)
+            {
+                app.UseDeveloperExceptionPage();
             }
         }
 

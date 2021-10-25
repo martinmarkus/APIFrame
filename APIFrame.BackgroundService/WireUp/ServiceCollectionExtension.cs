@@ -64,7 +64,6 @@ namespace APIFrame.BackgroundService.WireUp
                             break;
                         }
                     }
-
                 }
                 catch (Exception e)
                 {

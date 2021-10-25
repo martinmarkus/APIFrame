@@ -3,6 +3,7 @@ using Hangfire;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Newtonsoft.Json;
+using Serilog;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using System.Threading.Tasks;
 
@@ -43,12 +44,13 @@ namespace APIFrame.Web.WireUp
 
         public static void UseBaseServices(this IApplicationBuilder app)
         {
-            app.UseCookiePolicy();
             app.UseMvc();
-            app.UseHttpsRedirection();
             app.UseRouting();
+            app.UseCookiePolicy();
             app.UseHttpsRedirection();
             app.UseIpRateLimiting();
+
+            app.UseSerilogRequestLogging();
 
             app.UseEndpoints(endpoints =>
             {

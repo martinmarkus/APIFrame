@@ -23,13 +23,13 @@ namespace APIFrame.Web.Logging
         {
             try
             {
-                if (!(context.Controller is APIBaseController))
+                if (!(context.Controller is BaseAPIController))
                 {
                     await next();
                     return;
                 }
 
-                var request = (context.Controller as APIBaseController).Request;
+                var request = (context.Controller as BaseAPIController).Request;
 
                 using var reader = new StreamReader(request.Body, Encoding.UTF8, true, 1024, true);
                 var bodyContent = reader.ReadToEnd();
