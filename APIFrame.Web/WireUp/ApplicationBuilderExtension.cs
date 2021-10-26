@@ -1,4 +1,5 @@
-﻿using AspNetCoreRateLimit;
+﻿using APIFrame.Web.Request;
+using AspNetCoreRateLimit;
 using Hangfire;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
@@ -49,6 +50,8 @@ namespace APIFrame.Web.WireUp
             app.UseCookiePolicy();
             app.UseHttpsRedirection();
             app.UseIpRateLimiting();
+
+            app.UseMiddleware<ContextInfoMiddleware>();
 
             app.UseSerilogRequestLogging();
 

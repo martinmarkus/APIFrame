@@ -12,6 +12,8 @@ using APIFrame.Web.Conventions;
 using System.Collections.Generic;
 using System.Linq;
 using APIFrame.Core.Configuration;
+using APIFrame.Web.Authentication;
+using APIFrame.Web.Authentication.Interfaces;
 
 namespace APIFrame.Web.WireUp
 {
@@ -26,6 +28,7 @@ namespace APIFrame.Web.WireUp
             services.ResolveDynamically(Assembly.GetAssembly(typeof(ServiceCollectionExtension)));
             services.AddScoped<StringGeneratorUtil>();
             services.AddScoped<APILogger>();
+            services.AddScoped<IAuthContextInfo, AuthContextInfo>();
 
             services.AddControllers();
             services.AddHttpClient();

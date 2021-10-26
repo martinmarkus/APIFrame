@@ -1,6 +1,4 @@
-﻿using APIFrame.Core.Configuration;
-using APIFrame.Web.Logging;
-using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -40,25 +38,6 @@ namespace APIFrame.Web.WireUp
             {
                 Log.CloseAndFlush();
             }
-
-            //Host.CreateDefaultBuilder(baseArgs)
-            //    .ConfigureLogging((context, logging) =>
-            //    {
-            //        logging.ClearProviders();
-            //        logging.AddConfiguration(context.Configuration.GetSection("Logging"));
-            //        logging.AddConsole();
-
-            //        var baseOptions = context.Configuration.GetSection(nameof(LogOptions));
-            //        var customLogContainerPath = baseOptions.Get<LogOptions>().LogPath;
-
-            //        logging.AddFile($"{customLogContainerPath}\\Log");
-            //    })
-            //    .ConfigureWebHostDefaults(webBuilder =>
-            //    {
-            //        webBuilder.UseStartup<T>();
-            //    })
-            //    .Build()
-            //    .Run();
         }
     }
 }
