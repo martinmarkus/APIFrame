@@ -14,6 +14,7 @@ using System.Linq;
 using APIFrame.Core.Configuration;
 using APIFrame.Web.Authentication;
 using APIFrame.Web.Authentication.Interfaces;
+using APIFrame.Web.Request.Filters;
 
 namespace APIFrame.Web.WireUp
 {
@@ -51,6 +52,8 @@ namespace APIFrame.Web.WireUp
            byte[] secretKey,
            string issuer)
         {
+            services.AddScoped<Antiforgery>();
+
             services.AddAuthentication(oOptions =>
             {
                 oOptions.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

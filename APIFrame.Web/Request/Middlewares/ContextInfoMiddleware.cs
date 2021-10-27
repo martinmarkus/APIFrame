@@ -19,17 +19,18 @@ namespace APIFrame.Web.Request
         public async Task InvokeAsync(HttpContext httpContext, IAuthContextInfo authContextInfo)
         {
             var authToken = httpContext.Request?.Cookies[AuthConstants.AuthToken];
-            var antiforgeryToken = httpContext.Request?.Cookies[AuthConstants.AntiforgeryToken];
 
             var userIdClaim = httpContext.User?.Claims?
-                .First(claim => claim.Type.Equals(
+                .FirstOrDefault(claim => claim.Type.Equals(
                     ClaimConstants.UserId,
                     StringComparison.OrdinalIgnoreCase));
 
             authContextInfo.AuthToken = authToken;
-            authContextInfo.AntiforgeryToken = antiforgeryToken;
             authContextInfo.ClientIp = httpContext.Connection?.RemoteIpAddress?.ToString();
             authContextInfo.UserId = userIdClaim?.Value;
+            authContextInfo.RequestDate = DateTime.Now;
+
+            authContextInfo.UserId = "asd";
 
             await _next(httpContext);
         }

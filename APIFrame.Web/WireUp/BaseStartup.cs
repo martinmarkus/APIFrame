@@ -12,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Text;
 using APIFrame.Web.Logging;
+using Microsoft.AspNetCore.Http;
 
 namespace APIFrame.Web.WireUp
 {

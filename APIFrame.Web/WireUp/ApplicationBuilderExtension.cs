@@ -45,15 +45,14 @@ namespace APIFrame.Web.WireUp
 
         public static void UseBaseServices(this IApplicationBuilder app)
         {
-            app.UseMvc();
-            app.UseRouting();
-            app.UseCookiePolicy();
-            app.UseHttpsRedirection();
             app.UseIpRateLimiting();
-
+            app.UseSerilogRequestLogging();
             app.UseMiddleware<ContextInfoMiddleware>();
 
-            app.UseSerilogRequestLogging();
+            app.UseRouting();
+            app.UseHttpsRedirection();
+            app.UseMvc();
+            app.UseCookiePolicy();
 
             app.UseEndpoints(endpoints =>
             {

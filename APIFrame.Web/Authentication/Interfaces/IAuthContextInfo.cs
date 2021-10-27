@@ -1,4 +1,6 @@
-﻿namespace APIFrame.Web.Authentication.Interfaces
+﻿using System;
+
+namespace APIFrame.Web.Authentication.Interfaces
 {
     public interface IAuthContextInfo
     {
@@ -9,5 +11,7 @@
         public string UserId { get; set; }
 
         public string ClientIp { get; set; }
+
+        DateTime RequestDate { get; set; }
     }
 }
