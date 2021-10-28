@@ -15,6 +15,9 @@ using APIFrame.Core.Configuration;
 using APIFrame.Web.Authentication;
 using APIFrame.Web.Authentication.Interfaces;
 using APIFrame.Web.Request.Filters;
+using APIFrame.DataAccess.Repositories.Interfaces;
+using APIFrame.DataAccess.Repositories;
+using APIFrame.Web.Services.Interfaces;
 
 namespace APIFrame.Web.WireUp
 {

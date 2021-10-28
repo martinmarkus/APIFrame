@@ -13,6 +13,8 @@ using System;
 using System.Text;
 using APIFrame.Web.Logging;
 using Microsoft.AspNetCore.Http;
+using APIFrame.DataAccess.Repositories.Interfaces;
+using APIFrame.DataAccess.Repositories;
 
 namespace APIFrame.Web.WireUp
 {

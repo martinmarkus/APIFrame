@@ -1,10 +1,12 @@
-﻿using APIFrame.Core.Models;
+﻿using APIFrame.Core.Attributes;
+using APIFrame.Core.Models;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace APIFrame.DataAccess.Repositores.Interfaces
 {
+    [ExceptDynamicResolve]
     public interface IAsyncRepo<T> where T : BaseEntity
     {
         Task<T> GetByIdAsync(Guid id);

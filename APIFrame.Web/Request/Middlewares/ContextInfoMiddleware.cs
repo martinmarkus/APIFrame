@@ -30,8 +30,6 @@ namespace APIFrame.Web.Request
             authContextInfo.UserId = userIdClaim?.Value;
             authContextInfo.RequestDate = DateTime.Now;
 
-            authContextInfo.UserId = "asd";
-
             await _next(httpContext);
         }
     }

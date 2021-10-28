@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace APIFrame.Web.Attributes
+namespace APIFrame.Core.Attributes
 {
     /// <summary>
     /// Excepts the annotated class or interface  from the dynamic dependency resolving.

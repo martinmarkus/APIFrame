@@ -17,5 +17,7 @@
         public bool UseDefaultSwagger { get; set; }
 
         public bool UseBackgroundJobs { get; set; }
+
+        public bool UseDbAndFileLogger { get; set; }
     }
 }

@@ -1,4 +1,5 @@
-﻿using APIFrame.Core.Exceptions;
+﻿using APIFrame.Core.Attributes;
+using APIFrame.Core.Exceptions;
 using APIFrame.Web.Attributes;
 using Microsoft.Extensions.DependencyInjection;
 using System;

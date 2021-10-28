@@ -1,5 +1,5 @@
-﻿using APIFrame.Core.DTOs;
-using APIFrame.Web.Attributes;
+﻿using APIFrame.Core.Attributes;
+using APIFrame.Core.DTOs;
 using System.Threading.Tasks;
 
 namespace APIFrame.Web.Services.Interfaces
