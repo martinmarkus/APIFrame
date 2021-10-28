@@ -32,8 +32,9 @@ namespace APIFrame.Web.Request.Middlewares
             {
                 LogType = Core.Enums.LogType.Web,
                 Executor = contextInfo.UserId ?? AuthConstants.Anonymous,
-                Message = $"'{httpContext.Request.Method.ToUpper()}' request has finished ({httpContext.Response.StatusCode}) after {contextInfo.ElapsedMs} ms."
-            }); ;
+                Message = $"'{httpContext.Request.Method.ToUpper()}' request has finished " +
+                    $"({httpContext.Response.StatusCode}) after {contextInfo.ElapsedMs} ms."
+            });
         }
     }
 }

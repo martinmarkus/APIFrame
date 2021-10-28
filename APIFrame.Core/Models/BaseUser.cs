@@ -28,5 +28,8 @@ namespace APIFrame.Core.Models
 
         [Required]
         public bool IsBanned { get; set; } = false;
+
+        [Required]
+        public bool IsRegistrationVerified { get; set; } = false;
     }
 }

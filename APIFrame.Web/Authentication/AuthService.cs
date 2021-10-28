@@ -73,18 +73,6 @@ namespace APIFrame.Web.Authentication
             return _userMapper.MapToBaseUserDTO(user) as T;
         }
 
-        private void UpdateContextInfo(string userId)
-        {
-            var claims = new List<Claim>()
-            {
-                new Claim(ClaimConstants.UserId, userId),
-                new Claim(ClaimConstants.ClientIp, _contextInfo.ClientIp)
-            };
-
-            _contextInfo.AuthToken = _jwtGeneratorService.GenerateJwtToken(claims);
-            _contextInfo.AntiforgeryToken = _antiforgeryService.GenerateAntiforgeryToken();
-        }
-
         public virtual async Task<T> RegisterAsync<T>(
             RegisterRequestDTO registerDTO,
             string clientIp) where T : BaseUserDTO
@@ -106,8 +94,21 @@ namespace APIFrame.Web.Authentication
                 AuthIP = clientIp
             });
 
+            UpdateContextInfo(registeredUser.Email);
 
             return _userMapper.MapToBaseUserDTO(registeredUser) as T;
+        }
+
+        private void UpdateContextInfo(string userId)
+        {
+            var claims = new List<Claim>()
+            {
+                new Claim(ClaimConstants.UserId, userId),
+                new Claim(ClaimConstants.ClientIp, _contextInfo.ClientIp)
+            };
+
+            _contextInfo.AuthToken = _jwtGeneratorService.GenerateJwtToken(claims);
+            _contextInfo.AntiforgeryToken = _antiforgeryService.GenerateAntiforgeryToken();
         }
     }
 }
