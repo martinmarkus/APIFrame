@@ -12,9 +12,10 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Text;
 using APIFrame.Web.Logging;
-using Microsoft.AspNetCore.Http;
 using APIFrame.DataAccess.Repositories.Interfaces;
 using APIFrame.DataAccess.Repositories;
+using APIFrame.Web.Logging.Interfaces;
+using APIFrame.Logging.Services;
 
 namespace APIFrame.Web.WireUp
 {
@@ -132,12 +133,17 @@ namespace APIFrame.Web.WireUp
                 services.AddBackgroundJobSerice();
                 services.AddCustomHangfire();
             }
+
+            services.AddScoped<ILogRepo, LogRepo>();
+            services.AddScoped<ILogService, LogService>();
         }
 
         public virtual void Configure(
             IApplicationBuilder app,
             IWebHostEnvironment env)
         {
+            app.UseBaseServices();
+
             var isDevEnv = IsDevelopmentEnvironment();
 
             // INFO: For nginx hosting
@@ -147,7 +153,6 @@ namespace APIFrame.Web.WireUp
             });
 
             app.UseCustomExceptionHandling();
-            app.UseBaseServices();
 
             if (BaseOptions.UseDefaultCorsPolicies)
             {

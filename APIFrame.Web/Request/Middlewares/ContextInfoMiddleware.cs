@@ -2,6 +2,7 @@
 using APIFrame.Web.Authentication.Interfaces;
 using Microsoft.AspNetCore.Http;
 using System;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -16,7 +17,7 @@ namespace APIFrame.Web.Request
             _next = next;
         }
 
-        public async Task InvokeAsync(HttpContext httpContext, IAuthContextInfo authContextInfo)
+        public async Task InvokeAsync(HttpContext httpContext, IContextInfo contextInfo)
         {
             var authToken = httpContext.Request?.Cookies[AuthConstants.AuthToken];
 
@@ -25,10 +26,18 @@ namespace APIFrame.Web.Request
                     ClaimConstants.UserId,
                     StringComparison.OrdinalIgnoreCase));
 
-            authContextInfo.AuthToken = authToken;
-            authContextInfo.ClientIp = httpContext.Connection?.RemoteIpAddress?.ToString();
-            authContextInfo.UserId = userIdClaim?.Value;
-            authContextInfo.RequestDate = DateTime.Now;
+            var clientIpClaim = httpContext.User?.Claims?
+                .FirstOrDefault(claim => claim.Type.Equals(
+                    ClaimConstants.ClientIp,
+                    StringComparison.OrdinalIgnoreCase));
+
+            contextInfo.AuthToken = authToken;
+            contextInfo.ClientIp = httpContext.Connection?.RemoteIpAddress?.ToString();
+            contextInfo.UserId = userIdClaim?.Value ?? AuthConstants.Anonymous;
+            contextInfo.RequestDate = DateTime.ParseExact(
+                DateTime.Now.ToString(),
+                DateTimeConstants.DateFormat,
+                CultureInfo.InvariantCulture);
 
             await _next(httpContext);
         }

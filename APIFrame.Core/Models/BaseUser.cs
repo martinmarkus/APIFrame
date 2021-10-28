@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace APIFrame.Core.Models
 {
-    [Table("users")]
+    [Table("baseusers")]
     public class BaseUser : BaseEntity
     {
         [Required]

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Text;
 
-namespace APIFrame.Core.Utils
+namespace APIFrame.Utils.String
 {
-    public class StringGeneratorUtil
+    public class StringGenerator
     {
         public string GetRandomString(int size = 8)
         {

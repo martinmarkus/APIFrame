@@ -8,7 +8,7 @@ namespace APIFrame.Web.WireUp
 {
     public class BaseAppInitializer
     {
-        public static void StartWithDefaultBuilderAndLogging<T>(string[] baseArgs)
+        public static void StartWithDefaultBuilderWithLogging<T>(string[] baseArgs)
             where T : BaseStartup
         {
             try

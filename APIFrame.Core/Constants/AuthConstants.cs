@@ -7,5 +7,7 @@
         public static readonly string AntiforgeryCookieToken = "XSRF-TOKEN";
 
         public static readonly string AntiforgeryHeaderToken = "X-XSRF-TOKEN";
+
+        public static readonly string Anonymous = "Anonymous";
     }
 }

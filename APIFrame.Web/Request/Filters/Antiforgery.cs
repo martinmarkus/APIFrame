@@ -1,7 +1,9 @@
 ﻿using APIFrame.Core.Constants;
+using APIFrame.Core.Models;
+using APIFrame.Web.Authentication.Interfaces;
+using APIFrame.Web.Logging.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
 
@@ -9,10 +11,14 @@ namespace APIFrame.Web.Request.Filters
 {
     public class Antiforgery : ActionFilterAttribute
     {
-        private readonly ILogger<Antiforgery> _logger;
+        private readonly IAntiforgeryService _antiforgeryToken;
+        private readonly ILogService _logger;
 
-        public Antiforgery(ILogger<Antiforgery> logger)
+        public Antiforgery(
+             IAntiforgeryService antiforgeryToken,
+             ILogService logger)
         {
+            _antiforgeryToken = antiforgeryToken ?? throw new ArgumentException(nameof(antiforgeryToken));
             _logger = logger ?? throw new ArgumentException(nameof(logger));
         }
 
@@ -35,32 +41,28 @@ namespace APIFrame.Web.Request.Filters
 
             try
             {
-                var isTokenChallenged = false;
-                if (string.IsNullOrEmpty(antiforgeryFromCookie))
-                {
-                    _logger.LogInformation("Antiforgery token challenged: token is missing from cookies.");
-                    isTokenChallenged = true;
-                }
-                else if (string.IsNullOrEmpty(antiforgeryFromHeader))
-                {
-                    _logger.LogInformation("Antiforgery token challenged: token is missing from headers.");
-                    isTokenChallenged = true;
-                }
-                else if (antiforgeryFromCookie.Equals(antiforgeryFromHeader, StringComparison.OrdinalIgnoreCase))
-                {
-                    _logger.LogInformation("Antiforgery token challenged: header and cookie tokens are not matching.");
-                    isTokenChallenged = true;
-                }
+                var validationResult =_antiforgeryToken.ValidateAntiforgeryTokens(antiforgeryFromCookie, antiforgeryFromHeader);
 
-                // Return 401 on missing antiforgery token
-                if (isTokenChallenged)
+                // Returns 401 on missing antiforgery token
+                if (validationResult != Core.Enums.AntiforgeryValidation.Valid)
                 {
+                    await _logger.LogAsync(new Log()
+                    {
+                        LogLevel = Core.Enums.LogLevel.Critical,
+                        LogType = Core.Enums.LogType.Antiforgery,
+                        Message = $"Antiforgery token validation was challenged: {validationResult}"
+                    });
                     context.Result = new UnauthorizedResult();
                 }
             }
             catch (Exception e)
             {
-                _logger.LogError(e.ToString());
+                await _logger.LogAsync(new Log()
+                {
+                    LogLevel = Core.Enums.LogLevel.Critical,
+                    LogType = Core.Enums.LogType.Antiforgery,
+                    Message = e.ToString()
+                });
                 context.Result = new UnauthorizedResult();
             }
 

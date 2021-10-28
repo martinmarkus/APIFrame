@@ -2,7 +2,7 @@
 
 namespace APIFrame.Web.Authentication.Interfaces
 {
-    public interface IAuthContextInfo
+    public interface IContextInfo
     {
         public string AuthToken { get; set; }
 
@@ -13,5 +13,8 @@ namespace APIFrame.Web.Authentication.Interfaces
         public string ClientIp { get; set; }
 
         DateTime RequestDate { get; set; }
+        long ElapsedMs { get; set; }
+
+        string ToString();
     }
 }

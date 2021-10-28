@@ -1,7 +1,9 @@
 ﻿using APIFrame.Core.Enums;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace APIFrame.Core.Models
 {
+    [Table("logs")]
     public class Log : BaseEntity
     {
         public LogLevel LogLevel { get; set; } = LogLevel.Info;

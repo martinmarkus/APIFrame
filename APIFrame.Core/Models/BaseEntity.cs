@@ -1,5 +1,7 @@
-﻿using System;
+﻿using APIFrame.Core.Constants;
+using System;
 using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 using System.Text.Json.Serialization;
 
 namespace APIFrame.Core.Models
@@ -16,10 +18,6 @@ namespace APIFrame.Core.Models
 
         [Required]
         [JsonIgnore]
-        public DateTime CreationDate { get; set; } = DateTime.Now.ToLocalTime();
-
-        [Timestamp]
-        [JsonIgnore]
-        public byte[] RowVersion { get; set; }
+        public DateTime CreationDate { get; set; } = DateTime.Now;
     }
 }

@@ -8,6 +8,8 @@
 
         public string AuthIssuerName { get; set; }
 
+        public int AuthSessionMinutes { get; set; }
+
         public string[] AllowedCORSPolicyURLs { get; set; }
 
         public bool UseDefaultCorsPolicies { get; set; }
@@ -17,7 +19,5 @@
         public bool UseDefaultSwagger { get; set; }
 
         public bool UseBackgroundJobs { get; set; }
-
-        public bool UseDbAndFileLogger { get; set; }
     }
 }

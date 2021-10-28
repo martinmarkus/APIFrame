@@ -2,7 +2,7 @@
 using APIFrame.Core.DTOs;
 using System.Threading.Tasks;
 
-namespace APIFrame.Web.Services.Interfaces
+namespace APIFrame.Web.Authentication.Interfaces
 {
     [ExceptDynamicResolve]
     public interface IAuthService

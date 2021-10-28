@@ -1,5 +1,4 @@
 ﻿using AspNetCoreRateLimit;
-using APIFrame.Core.Utils;
 using APIFrame.Web.Logging;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
@@ -15,9 +14,8 @@ using APIFrame.Core.Configuration;
 using APIFrame.Web.Authentication;
 using APIFrame.Web.Authentication.Interfaces;
 using APIFrame.Web.Request.Filters;
-using APIFrame.DataAccess.Repositories.Interfaces;
-using APIFrame.DataAccess.Repositories;
-using APIFrame.Web.Services.Interfaces;
+using System.IdentityModel.Tokens.Jwt;
+using APIFrame.Utils.String;
 
 namespace APIFrame.Web.WireUp
 {
@@ -30,9 +28,9 @@ namespace APIFrame.Web.WireUp
         public static void AddDefaultServices(this IServiceCollection services)
         {
             services.ResolveDynamically(Assembly.GetAssembly(typeof(ServiceCollectionExtension)));
-            services.AddScoped<StringGeneratorUtil>();
+            services.AddScoped<StringGenerator>();
             services.AddScoped<APILogger>();
-            services.AddScoped<IAuthContextInfo, AuthContextInfo>();
+            services.AddScoped<IContextInfo, ContextInfo>();
 
             services.AddControllers();
             services.AddHttpClient();
@@ -55,7 +53,9 @@ namespace APIFrame.Web.WireUp
            byte[] secretKey,
            string issuer)
         {
+            services.AddScoped<AuthorizeIp>();
             services.AddScoped<Antiforgery>();
+            services.AddTransient<JwtSecurityTokenHandler>();
 
             services.AddAuthentication(oOptions =>
             {

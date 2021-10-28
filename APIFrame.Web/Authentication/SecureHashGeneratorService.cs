@@ -1,11 +1,11 @@
-﻿using APIFrame.Web.Services.Interfaces;
+﻿using APIFrame.Web.Authentication.Interfaces;
 using System;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace APIFrame.Web.Services
+namespace APIFrame.Web.Authentication
 {
-    public class PasswordService : IPasswordService
+    public class SecureHashGeneratorService : ISecureHashGeneratorService
     {
         private const int SALT_SIZE = 24;
         private const int HASH_SIZE = 24;
