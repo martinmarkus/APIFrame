@@ -29,7 +29,6 @@ namespace APIFrame.Web.WireUp
         {
             services.ResolveDynamically(Assembly.GetAssembly(typeof(ServiceCollectionExtension)));
             services.AddScoped<StringGenerator>();
-            services.AddScoped<APILogger>();
             services.AddScoped<IContextInfo, ContextInfo>();
 
             services.AddControllers();
@@ -53,6 +52,7 @@ namespace APIFrame.Web.WireUp
            byte[] secretKey,
            string issuer)
         {
+            services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<AuthorizeIp>();
             services.AddScoped<Antiforgery>();
             services.AddTransient<JwtSecurityTokenHandler>();

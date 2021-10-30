@@ -9,7 +9,6 @@ namespace APIFrame.Web.Controllers
     [ApiController]
     [Route("[controller]/[action]")]
     [ExceptionHandling.ExceptionHandler]
-    [ServiceFilter(typeof(APILogger))]
     public abstract class BaseAPIController : ControllerBase
     {
     }

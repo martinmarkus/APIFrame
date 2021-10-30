@@ -1,4 +1,4 @@
-﻿namespace APIFrame.BackgroundService.Configuration
+﻿namespace APIFrame.Core.Configuration
 {
     public sealed class JobConfigurationOptions
     {
